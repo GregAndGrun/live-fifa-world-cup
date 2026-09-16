@@ -32,11 +32,16 @@ describe('useScoreboard', () => {
 
   it('records a validation error without adding a match', () => {
     const { result } = renderHook(() => useScoreboard())
+    let startResult: ReturnType<typeof result.current.startMatch> | undefined
 
     act(() => {
-      result.current.startMatch('Brazil', 'brazil')
+      startResult = result.current.startMatch('Brazil', 'brazil')
     })
 
+    expect(startResult).toEqual({
+      ok: false,
+      message: 'Home and away teams must be different.',
+    })
     expect(result.current.visibleMatches).toEqual([])
     expect(result.current.feedback).toEqual({
       kind: 'error',

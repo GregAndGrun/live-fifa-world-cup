@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer, useState } from 'react'
+import { useState } from 'react'
 import type { Match } from '../domain/match'
 import {
   filterMatchesByTeamName,
@@ -10,9 +10,11 @@ import {
   scoreboardReducer,
   type ScoreboardState,
 } from '../state/scoreboardReducer'
+import type { StartMatchResult } from './useStartMatchForm'
+
+export type { StartMatchResult }
 
 export interface UseScoreboardResult {
-  matches: Match[]
   feedback: ScoreboardState['feedback']
   teamNameFilter: string
   setTeamNameFilter: (value: string) => void
@@ -20,57 +22,60 @@ export interface UseScoreboardResult {
   finishedMatches: Match[]
   liveCount: number
   finishedCount: number
-  startMatch: (homeTeam: string, awayTeam: string) => void
+  startMatch: (homeTeam: string, awayTeam: string) => StartMatchResult
   updateScore: (id: string, homeScore: number, awayScore: number) => void
   finish: (id: string) => void
 }
 
 export function useScoreboard(): UseScoreboardResult {
-  const [state, dispatch] = useReducer(
-    scoreboardReducer,
-    initialScoreboardState,
-  )
+  const [state, setState] = useState(initialScoreboardState)
   const [teamNameFilter, setTeamNameFilter] = useState('')
 
-  const liveMatches = useMemo(
-    () => getMatchesInProgress(state.matches),
-    [state.matches],
+  const liveMatches = getMatchesInProgress(state.matches)
+  const completedMatches = getFinishedMatches(state.matches)
+  const visibleMatches = filterMatchesByTeamName(liveMatches, teamNameFilter)
+  const finishedMatches = filterMatchesByTeamName(
+    completedMatches,
+    teamNameFilter,
   )
 
-  const completedMatches = useMemo(
-    () => getFinishedMatches(state.matches),
-    [state.matches],
-  )
+  function startMatch(homeTeam: string, awayTeam: string): StartMatchResult {
+    let result: StartMatchResult = { ok: true }
 
-  const visibleMatches = useMemo(
-    () => filterMatchesByTeamName(liveMatches, teamNameFilter),
-    [liveMatches, teamNameFilter],
-  )
+    setState((previous) => {
+      const next = scoreboardReducer(previous, {
+        type: 'start',
+        homeTeam,
+        awayTeam,
+      })
 
-  const finishedMatches = useMemo(
-    () => filterMatchesByTeamName(completedMatches, teamNameFilter),
-    [completedMatches, teamNameFilter],
-  )
+      result =
+        next.feedback?.kind === 'error'
+          ? { ok: false, message: next.feedback.message }
+          : { ok: true }
 
-  const startMatch = useCallback(
-    (homeTeam: string, awayTeam: string) =>
-      dispatch({ type: 'start', homeTeam, awayTeam }),
-    [],
-  )
+      return next
+    })
 
-  const updateScore = useCallback(
-    (id: string, homeScore: number, awayScore: number) =>
-      dispatch({ type: 'update-score', id, homeScore, awayScore }),
-    [],
-  )
+    return result
+  }
 
-  const finish = useCallback(
-    (id: string) => dispatch({ type: 'finish', id }),
-    [],
-  )
+  function updateScore(id: string, homeScore: number, awayScore: number) {
+    setState((previous) =>
+      scoreboardReducer(previous, {
+        type: 'update-score',
+        id,
+        homeScore,
+        awayScore,
+      }),
+    )
+  }
+
+  function finish(id: string) {
+    setState((previous) => scoreboardReducer(previous, { type: 'finish', id }))
+  }
 
   return {
-    matches: state.matches,
     feedback: state.feedback,
     teamNameFilter,
     setTeamNameFilter,

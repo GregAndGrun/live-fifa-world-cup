@@ -1,21 +1,19 @@
-import type { Match } from '../domain/match'
+import type { StartMatchResult } from '../hooks/useStartMatchForm'
 import { useStartMatchForm } from '../hooks/useStartMatchForm'
 import { FootballIcon, KickoffIcon, TeamShieldIcon } from './icons'
 
 interface StartMatchFormProps {
-  matches: readonly Match[]
-  onStart: (homeTeam: string, awayTeam: string) => void
+  onStart: (homeTeam: string, awayTeam: string) => StartMatchResult
 }
 
-export function StartMatchForm({ matches, onStart }: StartMatchFormProps) {
+export function StartMatchForm({ onStart }: StartMatchFormProps) {
   const {
     homeTeam,
     awayTeam,
-    error,
     setHomeTeam,
     setAwayTeam,
     handleSubmit,
-  } = useStartMatchForm(matches, onStart)
+  } = useStartMatchForm(onStart)
 
   return (
     <section className="start-panel" aria-labelledby="start-match-title">
@@ -71,12 +69,6 @@ export function StartMatchForm({ matches, onStart }: StartMatchFormProps) {
           Start match
         </button>
       </form>
-
-      {error && (
-        <p className="form-error" role="alert">
-          {error}
-        </p>
-      )}
     </section>
   )
 }

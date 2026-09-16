@@ -12,7 +12,7 @@ export function normalizeTeamName(name: string): string {
 }
 
 function comparableTeamName(name: string): string {
-  return normalizeTeamName(name).toLocaleLowerCase()
+  return normalizeTeamName(name).toLocaleLowerCase('en-US')
 }
 
 export function validateTeams(homeTeam: string, awayTeam: string): void {

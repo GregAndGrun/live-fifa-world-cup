@@ -120,6 +120,20 @@ describe('scoreboard domain', () => {
     ).toThrow('A finished match cannot be updated.')
   })
 
+  it('allows decreasing a score for operator corrections', () => {
+    const original = match('1', 'Mexico', 'Canada', 1, 3, 2)
+
+    expect(
+      updateMatchScore(original, { homeScore: 2, awayScore: 2 }),
+    ).toMatchObject({ homeScore: 2, awayScore: 2 })
+  })
+
+  it('rejects finishing a match that is already finished', () => {
+    const finished = finishMatch(match('1', 'Mexico', 'Canada', 1))
+
+    expect(() => finishMatch(finished)).toThrow('This match is already finished.')
+  })
+
   it('lists finished matches with the most recently started first', () => {
     const live = match('live', 'Poland', 'Senegal', 3, 1, 0)
     const olderFinished = finishMatch(match('older', 'Peru', 'Denmark', 1, 1, 1))

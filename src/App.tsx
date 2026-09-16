@@ -11,7 +11,6 @@ import { useScoreboard } from './hooks/useScoreboard'
 
 export default function App() {
   const {
-    matches,
     feedback,
     teamNameFilter,
     setTeamNameFilter,
@@ -109,7 +108,7 @@ export default function App() {
         </section>
 
         <div className="content-grid">
-          <StartMatchForm matches={matches} onStart={startMatch} />
+          <StartMatchForm onStart={startMatch} />
 
           {feedback && (
             <p

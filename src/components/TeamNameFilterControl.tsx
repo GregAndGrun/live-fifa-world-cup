@@ -21,7 +21,7 @@ export function TeamNameFilterControl({
       </label>
       <input
         id={id}
-        name="teamNameFilter"
+        name={id}
         type="search"
         value={value}
         onChange={(event) => onChange(event.target.value)}

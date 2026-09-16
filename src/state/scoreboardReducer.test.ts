@@ -38,6 +38,17 @@ describe('scoreboardReducer', () => {
     })
   })
 
+  it('rejects starting a match when a team is already live', () => {
+    const withMexico = start(initialScoreboardState, 'Mexico', 'Canada')
+    const state = start(withMexico, 'Mexico', 'Spain')
+
+    expect(state.matches).toHaveLength(1)
+    expect(state.feedback).toEqual({
+      kind: 'error',
+      message: 'Mexico already has a match in progress.',
+    })
+  })
+
   it('updates a match score in place', () => {
     let state = start(initialScoreboardState, 'Mexico', 'Canada')
     state = scoreboardReducer(state, {
@@ -48,6 +59,28 @@ describe('scoreboardReducer', () => {
     })
 
     expect(state.matches[0]).toMatchObject({ homeScore: 1, awayScore: 0 })
+    expect(state.feedback).toEqual({
+      kind: 'success',
+      message: 'Score updated for Mexico vs Canada.',
+    })
+  })
+
+  it('allows decreasing a score for operator corrections', () => {
+    let state = start(initialScoreboardState, 'Mexico', 'Canada')
+    state = scoreboardReducer(state, {
+      type: 'update-score',
+      id: 'match-1',
+      homeScore: 2,
+      awayScore: 1,
+    })
+    state = scoreboardReducer(state, {
+      type: 'update-score',
+      id: 'match-1',
+      homeScore: 1,
+      awayScore: 1,
+    })
+
+    expect(state.matches[0]).toMatchObject({ homeScore: 1, awayScore: 1 })
     expect(state.feedback).toEqual({
       kind: 'success',
       message: 'Score updated for Mexico vs Canada.',
@@ -65,10 +98,42 @@ describe('scoreboardReducer', () => {
     })
   })
 
-  it('clears feedback on request', () => {
-    let state = start(initialScoreboardState, 'Mexico', 'Canada')
-    state = scoreboardReducer(state, { type: 'clear-feedback' })
+  it('rejects updating an unknown match id', () => {
+    const state = scoreboardReducer(initialScoreboardState, {
+      type: 'update-score',
+      id: 'missing',
+      homeScore: 1,
+      awayScore: 0,
+    })
 
-    expect(state.feedback).toBeNull()
+    expect(state.matches).toHaveLength(0)
+    expect(state.feedback).toEqual({
+      kind: 'error',
+      message: 'Match not found.',
+    })
+  })
+
+  it('rejects finishing an unknown match id', () => {
+    const state = scoreboardReducer(initialScoreboardState, {
+      type: 'finish',
+      id: 'missing',
+    })
+
+    expect(state.feedback).toEqual({
+      kind: 'error',
+      message: 'Match not found.',
+    })
+  })
+
+  it('rejects finishing a match that is already finished', () => {
+    let state = start(initialScoreboardState, 'Mexico', 'Canada')
+    state = scoreboardReducer(state, { type: 'finish', id: 'match-1' })
+    state = scoreboardReducer(state, { type: 'finish', id: 'match-1' })
+
+    expect(state.matches[0]).toMatchObject({ status: 'finished' })
+    expect(state.feedback).toEqual({
+      kind: 'error',
+      message: 'This match is already finished.',
+    })
   })
 })

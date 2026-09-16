@@ -119,4 +119,29 @@ describe('useMatchScoreForm', () => {
 
     expect(result.current.error).toBe('')
   })
+
+  it('resyncs field values when the initial scores change', () => {
+    const onUpdateScore = vi.fn()
+    const { result, rerender } = renderHook(
+      ({ home, away }) =>
+        useMatchScoreForm({
+          matchId: 'match-1',
+          initialHomeScore: home,
+          initialAwayScore: away,
+          onUpdateScore,
+        }),
+      { initialProps: { home: 0, away: 0 } },
+    )
+
+    act(() => {
+      result.current.setHomeScore('4')
+      result.current.setAwayScore('2')
+    })
+
+    rerender({ home: 1, away: 3 })
+
+    expect(result.current.homeScore).toBe('1')
+    expect(result.current.awayScore).toBe('3')
+    expect(result.current.error).toBe('')
+  })
 })

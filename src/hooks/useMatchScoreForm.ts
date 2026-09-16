@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 
 function parseScore(value: string): number | null {
   if (!/^\d+$/.test(value)) {
@@ -25,6 +25,12 @@ export function useMatchScoreForm({
   const [homeScore, setHomeScore] = useState(String(initialHomeScore))
   const [awayScore, setAwayScore] = useState(String(initialAwayScore))
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    setHomeScore(String(initialHomeScore))
+    setAwayScore(String(initialAwayScore))
+    setError('')
+  }, [matchId, initialHomeScore, initialAwayScore])
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
