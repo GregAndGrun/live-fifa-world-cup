@@ -997,7 +997,8 @@ input:focus {
   background: rgb(255 255 255 / 3%);
 }
 
-.finished-table-score-col {
+.finished-table th.finished-table-score-col,
+.finished-table td.finished-table-score-col {
   width: 160px;
   text-align: center;
 }
@@ -1007,7 +1008,8 @@ input:focus {
   vertical-align: middle;
 }
 
-.finished-table-away-col {
+.finished-table th.finished-table-away-col,
+.finished-table td.finished-table-away-col {
   text-align: right;
 }
 
