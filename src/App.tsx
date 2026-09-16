@@ -12,8 +12,10 @@ import { useScoreboard } from './hooks/useScoreboard'
 export default function App() {
   const {
     feedback,
-    teamNameFilter,
-    setTeamNameFilter,
+    liveTeamNameFilter,
+    setLiveTeamNameFilter,
+    finishedTeamNameFilter,
+    setFinishedTeamNameFilter,
     visibleMatches,
     finishedMatches,
     liveCount,
@@ -121,16 +123,16 @@ export default function App() {
 
           <MatchSummary
             matches={visibleMatches}
-            teamNameFilter={teamNameFilter}
-            onTeamNameFilterChange={setTeamNameFilter}
+            teamNameFilter={liveTeamNameFilter}
+            onTeamNameFilterChange={setLiveTeamNameFilter}
             onUpdateScore={updateScore}
             onFinish={finish}
           />
 
           <FinishedMatchesTable
             matches={finishedMatches}
-            teamNameFilter={teamNameFilter}
-            onTeamNameFilterChange={setTeamNameFilter}
+            teamNameFilter={finishedTeamNameFilter}
+            onTeamNameFilterChange={setFinishedTeamNameFilter}
           />
         </div>
       </main>

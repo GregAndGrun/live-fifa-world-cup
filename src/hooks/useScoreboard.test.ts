@@ -92,7 +92,7 @@ describe('useScoreboard', () => {
     expect(result.current.finishedCount).toBe(1)
   })
 
-  it('filters live and finished matches by team name without changing totals', () => {
+  it('filters live and finished matches independently without changing totals', () => {
     const { result } = renderHook(() => useScoreboard())
 
     act(() => {
@@ -112,15 +112,34 @@ describe('useScoreboard', () => {
     })
 
     act(() => {
-      result.current.setTeamNameFilter('mex')
+      result.current.setLiveTeamNameFilter('spain')
     })
 
     expect(result.current.liveCount).toBe(1)
     expect(result.current.finishedCount).toBe(1)
-    expect(result.current.visibleMatches).toEqual([])
+    expect(result.current.visibleMatches).toMatchObject([
+      { homeTeam: 'Spain', awayTeam: 'Brazil' },
+    ])
     expect(result.current.finishedMatches).toMatchObject([
       { homeTeam: 'Mexico', awayTeam: 'Canada' },
     ])
+
+    act(() => {
+      result.current.setFinishedTeamNameFilter('mex')
+    })
+
+    expect(result.current.visibleMatches).toMatchObject([
+      { homeTeam: 'Spain', awayTeam: 'Brazil' },
+    ])
+    expect(result.current.finishedMatches).toMatchObject([
+      { homeTeam: 'Mexico', awayTeam: 'Canada' },
+    ])
+
+    act(() => {
+      result.current.setFinishedTeamNameFilter('spain')
+    })
+
+    expect(result.current.finishedMatches).toEqual([])
   })
 
   it('orders visible matches by total goals then most recent start', () => {

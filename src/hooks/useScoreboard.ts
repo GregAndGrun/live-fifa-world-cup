@@ -16,8 +16,10 @@ export type { StartMatchResult }
 
 export interface UseScoreboardResult {
   feedback: ScoreboardState['feedback']
-  teamNameFilter: string
-  setTeamNameFilter: (value: string) => void
+  liveTeamNameFilter: string
+  setLiveTeamNameFilter: (value: string) => void
+  finishedTeamNameFilter: string
+  setFinishedTeamNameFilter: (value: string) => void
   visibleMatches: Match[]
   finishedMatches: Match[]
   liveCount: number
@@ -29,14 +31,15 @@ export interface UseScoreboardResult {
 
 export function useScoreboard(): UseScoreboardResult {
   const [state, setState] = useState(initialScoreboardState)
-  const [teamNameFilter, setTeamNameFilter] = useState('')
+  const [liveTeamNameFilter, setLiveTeamNameFilter] = useState('')
+  const [finishedTeamNameFilter, setFinishedTeamNameFilter] = useState('')
 
   const liveMatches = getMatchesInProgress(state.matches)
   const completedMatches = getFinishedMatches(state.matches)
-  const visibleMatches = filterMatchesByTeamName(liveMatches, teamNameFilter)
+  const visibleMatches = filterMatchesByTeamName(liveMatches, liveTeamNameFilter)
   const finishedMatches = filterMatchesByTeamName(
     completedMatches,
-    teamNameFilter,
+    finishedTeamNameFilter,
   )
 
   function startMatch(homeTeam: string, awayTeam: string): StartMatchResult {
@@ -77,8 +80,10 @@ export function useScoreboard(): UseScoreboardResult {
 
   return {
     feedback: state.feedback,
-    teamNameFilter,
-    setTeamNameFilter,
+    liveTeamNameFilter,
+    setLiveTeamNameFilter,
+    finishedTeamNameFilter,
+    setFinishedTeamNameFilter,
     visibleMatches,
     finishedMatches,
     liveCount: liveMatches.length,
