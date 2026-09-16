@@ -97,4 +97,51 @@ describe('App', () => {
     expect(cards[1]).toHaveTextContent('Germany')
     expect(cards[2]).toHaveTextContent('Mexico')
   })
+
+  it('filters live and finished matches by team name', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await startMatch(user, 'Mexico', 'Canada')
+    await startMatch(user, 'Spain', 'Brazil')
+    await updateScore(user, 'Mexico', 'Canada', 1, 0)
+
+    const mexicoCard = screen
+      .getByRole('heading', { name: /Mexico versus Canada/i })
+      .closest('article')
+    if (!mexicoCard) {
+      throw new Error('Expected Mexico vs Canada card')
+    }
+    await user.click(
+      within(mexicoCard).getByRole('button', { name: 'Finish match' }),
+    )
+
+    const liveFilter = screen.getByRole('searchbox', {
+      name: 'Filter live matches by team name',
+    })
+    const finishedFilter = screen.getByRole('searchbox', {
+      name: 'Filter finished matches by team name',
+    })
+    expect(liveFilter).toBeInTheDocument()
+    expect(finishedFilter).toBeInTheDocument()
+
+    await user.type(liveFilter, 'spain')
+
+    expect(
+      screen.getByRole('heading', { name: /Spain versus Brazil/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: /Mexico versus Canada/i }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('No finished matches for that team.')).toBeInTheDocument()
+    expect(finishedFilter).toHaveValue('spain')
+
+    await user.clear(finishedFilter)
+    await user.type(finishedFilter, 'mexico')
+
+    expect(screen.getByText('No live matches for that team')).toBeInTheDocument()
+    expect(liveFilter).toHaveValue('mexico')
+    const finishedTable = screen.getByRole('table')
+    expect(within(finishedTable).getByText('Mexico')).toBeInTheDocument()
+  })
 })

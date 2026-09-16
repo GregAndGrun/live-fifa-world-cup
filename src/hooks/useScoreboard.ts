@@ -1,6 +1,10 @@
-import { useCallback, useMemo, useReducer } from 'react'
+import { useCallback, useMemo, useReducer, useState } from 'react'
 import type { Match } from '../domain/match'
-import { getFinishedMatches, getMatchesInProgress } from '../domain/scoreboard'
+import {
+  filterMatchesByTeamName,
+  getFinishedMatches,
+  getMatchesInProgress,
+} from '../domain/scoreboard'
 import {
   initialScoreboardState,
   scoreboardReducer,
@@ -10,6 +14,8 @@ import {
 export interface UseScoreboardResult {
   matches: Match[]
   feedback: ScoreboardState['feedback']
+  teamNameFilter: string
+  setTeamNameFilter: (value: string) => void
   visibleMatches: Match[]
   finishedMatches: Match[]
   liveCount: number
@@ -24,15 +30,26 @@ export function useScoreboard(): UseScoreboardResult {
     scoreboardReducer,
     initialScoreboardState,
   )
+  const [teamNameFilter, setTeamNameFilter] = useState('')
 
-  const visibleMatches = useMemo(
+  const liveMatches = useMemo(
     () => getMatchesInProgress(state.matches),
     [state.matches],
   )
 
-  const finishedMatches = useMemo(
+  const completedMatches = useMemo(
     () => getFinishedMatches(state.matches),
     [state.matches],
+  )
+
+  const visibleMatches = useMemo(
+    () => filterMatchesByTeamName(liveMatches, teamNameFilter),
+    [liveMatches, teamNameFilter],
+  )
+
+  const finishedMatches = useMemo(
+    () => filterMatchesByTeamName(completedMatches, teamNameFilter),
+    [completedMatches, teamNameFilter],
   )
 
   const startMatch = useCallback(
@@ -55,10 +72,12 @@ export function useScoreboard(): UseScoreboardResult {
   return {
     matches: state.matches,
     feedback: state.feedback,
+    teamNameFilter,
+    setTeamNameFilter,
     visibleMatches,
     finishedMatches,
-    liveCount: visibleMatches.length,
-    finishedCount: finishedMatches.length,
+    liveCount: liveMatches.length,
+    finishedCount: completedMatches.length,
     startMatch,
     updateScore,
     finish,

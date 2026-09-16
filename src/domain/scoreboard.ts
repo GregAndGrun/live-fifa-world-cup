@@ -126,3 +126,22 @@ export function getFinishedMatches(matches: readonly Match[]): Match[] {
     .filter((match) => match.status === 'finished')
     .sort((first, second) => second.startedOrder - first.startedOrder)
 }
+
+export function matchIncludesTeamName(match: Match, teamNameQuery: string): boolean {
+  const query = comparableTeamName(teamNameQuery)
+  if (!query) {
+    return true
+  }
+
+  return (
+    comparableTeamName(match.homeTeam).includes(query) ||
+    comparableTeamName(match.awayTeam).includes(query)
+  )
+}
+
+export function filterMatchesByTeamName(
+  matches: readonly Match[],
+  teamNameQuery: string,
+): Match[] {
+  return matches.filter((match) => matchIncludesTeamName(match, teamNameQuery))
+}

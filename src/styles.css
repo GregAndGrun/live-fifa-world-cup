@@ -638,25 +638,43 @@ input:focus {
   margin-bottom: 1.25rem;
 }
 
-.summary-meta {
-  display: inline-flex;
-  gap: 0.4rem;
+.team-name-filter {
+  display: flex;
+  gap: 0.55rem;
   align-items: center;
-  padding: 0.4rem 0.85rem;
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: rgb(255 255 255 / 4%);
+  flex: 0 1 240px;
+}
+
+.team-name-filter label {
+  display: grid;
+  place-items: center;
+  color: var(--gold-dim);
+}
+
+.team-name-filter label svg {
+  width: 16px;
+  height: 16px;
+}
+
+.team-name-filter input {
+  width: 100%;
+  min-height: 38px;
+  padding: 0.45rem 0.7rem;
+  color: var(--ink);
+  font: inherit;
+  background: var(--paper);
   border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
   border-radius: var(--radius);
 }
 
-.summary-meta svg {
-  width: 14px;
-  height: 14px;
-  color: var(--gold-dim);
+.team-name-filter input::placeholder {
+  color: var(--muted);
+}
+
+.team-name-filter input:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .match-list {
@@ -680,7 +698,6 @@ input:focus {
 .match-card:hover {
   border-color: rgb(212 160 23 / 30%);
 }
-
 
 .match-content {
   padding: 1rem 1.1rem;
@@ -911,8 +928,13 @@ input:focus {
 
 .finished-section {
   padding: clamp(1.5rem, 4vw, 2rem) 0 clamp(3rem, 7vw, 5rem);
-  filter: grayscale(1);
-  opacity: 0.65;
+}
+
+.finished-toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  justify-content: space-between;
 }
 
 .finished-section .eyebrow {
@@ -921,6 +943,12 @@ input:focus {
 
 .finished-section .section-heading h2 {
   color: #8b93a0;
+}
+
+.finished-table-wrapper,
+.finished-empty {
+  filter: grayscale(1);
+  opacity: 0.65;
 }
 
 .finished-table-wrapper {
@@ -1107,9 +1135,15 @@ footer svg {
     display: none;
   }
 
-  .summary-toolbar {
+  .summary-toolbar,
+  .finished-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .team-name-filter {
+    flex: 1 1 auto;
+    width: 100%;
   }
 
   .match-list {

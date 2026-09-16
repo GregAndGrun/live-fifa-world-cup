@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { Match } from './match'
 import {
   createMatch,
+  filterMatchesByTeamName,
   finishMatch,
   getFinishedMatches,
   getMatchesInProgress,
@@ -126,5 +127,21 @@ describe('scoreboard domain', () => {
     const source = [live, olderFinished, newerFinished]
 
     expect(getFinishedMatches(source)).toEqual([newerFinished, olderFinished])
+  })
+
+  it('filters matches by a case-insensitive partial team name', () => {
+    const matches = [
+      match('1', 'Mexico', 'Canada', 1),
+      match('2', 'Spain', 'Brazil', 2),
+      match('3', 'Germany', 'France', 3),
+    ]
+
+    expect(
+      filterMatchesByTeamName(matches, ' mex ').map(({ homeTeam }) => homeTeam),
+    ).toEqual(['Mexico'])
+    expect(
+      filterMatchesByTeamName(matches, 'AN').map(({ homeTeam }) => homeTeam),
+    ).toEqual(['Mexico', 'Germany'])
+    expect(filterMatchesByTeamName(matches, '   ')).toEqual(matches)
   })
 })

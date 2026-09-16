@@ -13,6 +13,8 @@ export default function App() {
   const {
     matches,
     feedback,
+    teamNameFilter,
+    setTeamNameFilter,
     visibleMatches,
     finishedMatches,
     liveCount,
@@ -120,11 +122,17 @@ export default function App() {
 
           <MatchSummary
             matches={visibleMatches}
+            teamNameFilter={teamNameFilter}
+            onTeamNameFilterChange={setTeamNameFilter}
             onUpdateScore={updateScore}
             onFinish={finish}
           />
 
-          <FinishedMatchesTable matches={finishedMatches} />
+          <FinishedMatchesTable
+            matches={finishedMatches}
+            teamNameFilter={teamNameFilter}
+            onTeamNameFilterChange={setTeamNameFilter}
+          />
         </div>
       </main>
 

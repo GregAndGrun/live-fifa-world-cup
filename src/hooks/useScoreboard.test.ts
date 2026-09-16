@@ -87,6 +87,37 @@ describe('useScoreboard', () => {
     expect(result.current.finishedCount).toBe(1)
   })
 
+  it('filters live and finished matches by team name without changing totals', () => {
+    const { result } = renderHook(() => useScoreboard())
+
+    act(() => {
+      result.current.startMatch('Mexico', 'Canada')
+      result.current.startMatch('Spain', 'Brazil')
+    })
+
+    const mexico = result.current.visibleMatches.find(
+      (match) => match.homeTeam === 'Mexico',
+    )
+    if (!mexico) {
+      throw new Error('Expected Mexico vs Canada')
+    }
+
+    act(() => {
+      result.current.finish(mexico.id)
+    })
+
+    act(() => {
+      result.current.setTeamNameFilter('mex')
+    })
+
+    expect(result.current.liveCount).toBe(1)
+    expect(result.current.finishedCount).toBe(1)
+    expect(result.current.visibleMatches).toEqual([])
+    expect(result.current.finishedMatches).toMatchObject([
+      { homeTeam: 'Mexico', awayTeam: 'Canada' },
+    ])
+  })
+
   it('orders visible matches by total goals then most recent start', () => {
     const { result } = renderHook(() => useScoreboard())
 

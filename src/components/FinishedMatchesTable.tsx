@@ -1,19 +1,37 @@
 import type { Match } from '../domain/match'
 import { FlagPennantIcon, TrophyIcon, WhistleIcon } from './icons'
+import { TeamNameFilterControl } from './TeamNameFilterControl'
 
 interface FinishedMatchesTableProps {
   matches: readonly Match[]
+  teamNameFilter: string
+  onTeamNameFilterChange: (value: string) => void
 }
 
-export function FinishedMatchesTable({ matches }: FinishedMatchesTableProps) {
+export function FinishedMatchesTable({
+  matches,
+  teamNameFilter,
+  onTeamNameFilterChange,
+}: FinishedMatchesTableProps) {
+  const isFiltering = teamNameFilter.trim().length > 0
+
   return (
     <section className="finished-section" aria-labelledby="finished-title">
-      <div className="section-heading">
-        <p className="eyebrow">
-          <WhistleIcon />
-          Full time
-        </p>
-        <h2 id="finished-title">Finished matches</h2>
+      <div className="finished-toolbar">
+        <div className="section-heading">
+          <p className="eyebrow">
+            <WhistleIcon />
+            Full time
+          </p>
+          <h2 id="finished-title">Finished matches</h2>
+        </div>
+
+        <TeamNameFilterControl
+          id="finished-team-name-filter"
+          value={teamNameFilter}
+          onChange={onTeamNameFilterChange}
+          label="Filter finished matches by team name"
+        />
       </div>
 
       {matches.length > 0 ? (
@@ -72,7 +90,9 @@ export function FinishedMatchesTable({ matches }: FinishedMatchesTableProps) {
       ) : (
         <p className="finished-empty">
           <WhistleIcon />
-          No matches have finished yet.
+          {isFiltering
+            ? 'No finished matches for that team.'
+            : 'No matches have finished yet.'}
         </p>
       )}
     </section>
