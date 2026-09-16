@@ -4,21 +4,12 @@ import { BroadcastIcon, FootballIcon, WhistleIcon } from './icons'
 
 interface MatchCardProps {
   match: Match
-  position: number
   onUpdateScore: (id: string, homeScore: number, awayScore: number) => void
   onFinish: (id: string) => void
 }
 
-function rankLabel(position: number): string {
-  if (position === 1) return 'Gold rank'
-  if (position === 2) return 'Silver rank'
-  if (position === 3) return 'Bronze rank'
-  return `Position ${position}`
-}
-
 export function MatchCard({
   match,
-  position,
   onUpdateScore,
   onFinish,
 }: MatchCardProps) {
@@ -40,17 +31,7 @@ export function MatchCard({
   const errorId = `${match.id}-score-error`
 
   return (
-    <article
-      className={`match-card match-card-rank-${Math.min(position, 3)}`}
-      aria-labelledby={titleId}
-    >
-      <div className="match-rank" aria-label={rankLabel(position)}>
-        <span className="match-rank-number">
-          {String(position).padStart(2, '0')}
-        </span>
-        <span className="match-rank-label">Rank</span>
-      </div>
-
+    <article className="match-card" aria-labelledby={titleId}>
       <div className="match-content">
         <div className="match-broadcast-bar">
           <span className="live-badge">

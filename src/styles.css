@@ -669,8 +669,6 @@ input:focus {
 /* ── Match card (broadcast scorebug) ───────────────────── */
 
 .match-card {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
   overflow: hidden;
   background: var(--paper);
   border: 1px solid var(--line);
@@ -683,51 +681,6 @@ input:focus {
   border-color: rgb(212 160 23 / 30%);
 }
 
-.match-card-rank-1 {
-  border-left: 3px solid var(--gold-bright);
-}
-
-.match-card-rank-2 {
-  border-left: 3px solid var(--silver);
-}
-
-.match-card-rank-3 {
-  border-left: 3px solid var(--bronze);
-}
-
-.match-rank {
-  display: grid;
-  gap: 0.1rem;
-  place-items: center;
-  align-content: center;
-  padding: 0.5rem;
-  background: rgb(255 255 255 / 3%);
-  border-right: 1px solid var(--line);
-}
-
-.match-rank-number {
-  font-family: var(--display);
-  font-size: 1.4rem;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-  line-height: 1;
-}
-
-.match-card-rank-2 .match-rank-number {
-  color: var(--silver);
-}
-
-.match-card-rank-3 .match-rank-number {
-  color: var(--bronze);
-}
-
-.match-rank-label {
-  color: var(--muted);
-  font-size: 0.55rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
 
 .match-content {
   padding: 1rem 1.1rem;
@@ -1163,10 +1116,6 @@ footer svg {
     grid-template-columns: 1fr;
   }
 
-  .match-card {
-    grid-template-columns: 44px minmax(0, 1fr);
-  }
-
   .match-content {
     padding: 0.85rem;
   }
@@ -1221,14 +1170,6 @@ footer svg {
   .hero-stat {
     flex: 1;
     padding: 0.6rem 0.5rem;
-  }
-
-  .match-card {
-    grid-template-columns: 1fr;
-  }
-
-  .match-rank {
-    display: none;
   }
 
   .score-fields {

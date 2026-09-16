@@ -32,11 +32,10 @@ export function MatchSummary({
 
       {matches.length > 0 ? (
         <div className="match-list" aria-live="polite">
-          {matches.map((match, index) => (
+          {matches.map((match) => (
             <MatchCard
               key={match.id}
               match={match}
-              position={index + 1}
               onUpdateScore={onUpdateScore}
               onFinish={onFinish}
             />
